@@ -5,12 +5,21 @@ import numpy as np
 import pytesseract
 from PIL import Image
 import io
+import os
+import shutil
 
 app = Flask(__name__)
 CORS(app)
 
-# SET YOUR TESSERACT PATH
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+# Tesseract path setup for both Windows and Linux/Render
+if os.name == "nt":
+    pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+else:
+    tesseract_path = shutil.which("tesseract")
+    if tesseract_path:
+        pytesseract.pytesseract.tesseract_cmd = tesseract_path
+    else:
+        raise RuntimeError("Tesseract is not installed or not found in PATH")
 
 
 def preprocess_image(file_bytes):
@@ -37,6 +46,11 @@ def generate_summary(text):
     key_points = lines[:5]
 
     return summary, key_points
+
+
+@app.route("/")
+def home():
+    return "InkSense backend is running"
 
 
 @app.route("/ocr", methods=["POST"])
@@ -71,4 +85,4 @@ def ocr():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(host="0.0.0.0", port=5000, debug=True)
