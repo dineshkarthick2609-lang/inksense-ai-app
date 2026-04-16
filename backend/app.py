@@ -11,12 +11,17 @@ CORS(app)
 
 # SET YOUR TESSERACT PATH
 import os
+import shutil
 import pytesseract
 
 if os.name == "nt":
     pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 else:
-    pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"
+    tesseract_path = shutil.which("tesseract")
+    if tesseract_path:
+        pytesseract.pytesseract.tesseract_cmd = tesseract_path
+    else:
+        raise RuntimeError("Tesseract is not installed or not found in PATH")
 
 
 def preprocess_image(file_bytes):
