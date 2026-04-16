@@ -57,10 +57,10 @@ function App() {
     formData.append("image", image);
     formData.append("language", language);
 
-    const response = await fetch("http://127.0.0.1:5000/ocr", {
-      method: "POST",
-      body: formData,
-    });
+    const response = await fetch("https://inksense-backend-v2.onrender.com/ocr", {
+  method: "POST",
+  body: formData,
+});
 
     const data = await response.json();
     console.log("OCR response:", data);
